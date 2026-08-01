@@ -1,0 +1,1197 @@
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+
+import js from '@eslint/js';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config(
+  { ignores: ['dist'] },
+  {
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+    },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+    },
+  }
+);
+
+import { useEffect, useRef, useState } from 'react';
+
+export function useReveal<T extends HTMLElement = HTMLDivElement>(
+  options?: IntersectionObserverInit
+) {
+  const ref = useRef<T>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -60px 0px', ...options }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return { ref, visible };
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ink-950 text-ink-100 font-sans antialiased;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    @apply bg-gold-400/30 text-gold-100;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/[0.04] backdrop-blur-xl border border-white/[0.08];
+  }
+  .glass-strong {
+    @apply bg-white/[0.07] backdrop-blur-2xl border border-white/[0.12];
+  }
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-gold-200 via-gold-300 to-gold-400 bg-clip-text text-transparent;
+  }
+  .text-gradient-light {
+    @apply bg-gradient-to-b from-white to-ink-200 bg-clip-text text-transparent;
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #060912;
+}
+::-webkit-scrollbar-thumb {
+  background: #222A40;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #333C56;
+}
+
+import { Reveal } from '@/components/Reveal';
+import { Quote } from 'lucide-react';
+
+export function Testimonial() {
+  return (
+    <section className="relative py-28 sm:py-36">
+      <div className="relative mx-auto max-w-4xl px-5 sm:px-8">
+        <Reveal>
+          <div className="relative overflow-hidden rounded-[2.5rem] glass-strong p-10 sm:p-16 text-center">
+            <div className="pointer-events-none absolute -top-20 left-1/2 h-60 w-60 -translate-x-1/2 rounded-full bg-gold-500/10 blur-[80px]" />
+            <Quote className="mx-auto h-10 w-10 text-gold-300/40" strokeWidth={1} />
+            <blockquote className="mt-6 font-serif text-2xl font-light leading-relaxed tracking-tight text-white sm:text-3xl lg:text-4xl">
+              "I had spent years avoiding genealogy sites because I did not want my
+              family's names floating in some public database. Ancestral Hub let me
+              finally write it all down — and I am the only person who can see it."
+            </blockquote>
+            <div className="mt-8 flex items-center justify-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-gold-300 to-gold-500" />
+              <div className="text-left">
+                <p className="text-sm font-semibold text-white">Margaret R.</p>
+                <p className="text-xs text-ink-400">Member since 2024</p>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+import type { ReactNode } from 'react';
+import { useReveal } from '@/hooks/useReveal';
+
+interface RevealProps {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+  as?: 'div' | 'section' | 'article' | 'li' | 'span';
+}
+
+export function Reveal({ children, className = '', delay = 0, as = 'div' }: RevealProps) {
+  const { ref, visible } = useReveal();
+  const Tag = as;
+  return (
+    <Tag
+      ref={ref as never}
+      className={`reveal ${visible ? 'is-visible' : ''} ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </Tag>
+  );
+}
+
+import { Shield } from 'lucide-react';
+
+const cols = [
+  {
+    title: 'Product',
+    links: ['Features', 'Privacy', 'Security', 'Pricing'],
+  },
+  {
+    title: 'Company',
+    links: ['About', 'Our principles', 'Careers', 'Contact'],
+  },
+  {
+    title: 'Resources',
+    links: ['Help center', 'Getting started', 'Data export', 'Delete account'],
+  },
+];
+
+export function Footer() {
+  return (
+    <footer className="relative border-t border-white/[0.06] py-16">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="lg:col-span-2">
+            <a href="#top" className="flex items-center gap-2.5">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-gold-300 to-gold-500">
+                <Shield className="h-5 w-5 text-ink-900" strokeWidth={2.2} />
+              </span>
+              <span className="font-serif text-lg font-semibold tracking-tight text-white">
+                Ancestral<span className="text-gold-300"> Hub</span>
+              </span>
+            </a>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-400">
+              A completely private and secure genealogy platform. Your family story
+              belongs only to you.
+            </p>
+          </div>
+
+          {cols.map((col) => (
+            <div key={col.title}>
+              <p className="text-xs font-semibold uppercase tracking-wider text-ink-300">
+                {col.title}
+              </p>
+              <ul className="mt-4 flex flex-col gap-3">
+                {col.links.map((l) => (
+                  <li key={l}>
+                    <a href="#" className="text-sm text-ink-400 transition-colors hover:text-white">
+                      {l}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/[0.06] pt-8 sm:flex-row">
+          <p className="text-xs text-ink-500">
+            © {new Date().getFullYear()} Ancestral Hub. Privacy is the foundation.
+          </p>
+          <div className="flex items-center gap-6">
+            <a href="#" className="text-xs text-ink-500 hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" className="text-xs text-ink-500 hover:text-white transition-colors">Terms</a>
+            <a href="#" className="text-xs text-ink-500 hover:text-white transition-colors">Security</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+import { Reveal } from '@/components/Reveal';
+import { ArrowRight, Shield, Lock } from 'lucide-react';
+
+export function CTA() {
+  return (
+    <section id="cta" className="relative py-28 sm:py-36">
+      <div className="relative mx-auto max-w-5xl px-5 sm:px-8">
+        <Reveal>
+          <div className="relative overflow-hidden rounded-[2.5rem] glass-strong px-6 py-16 text-center sm:px-12 sm:py-20">
+            {/* Ambient glow */}
+            <div className="pointer-events-none absolute inset-0">
+              <div className="absolute -top-32 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-gold-500/15 blur-[100px]" />
+              <div className="absolute bottom-0 left-0 h-60 w-60 rounded-full bg-sage-700/15 blur-[90px]" />
+            </div>
+
+            <div className="relative">
+              <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-gold-300 to-gold-500 shadow-lg shadow-gold-500/30">
+                <Shield className="h-7 w-7 text-ink-900" strokeWidth={2} />
+              </div>
+
+              <h2 className="font-serif text-3xl font-light leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
+                Begin your family record
+                <br />
+                <span className="text-gradient-gold italic">in total privacy.</span>
+              </h2>
+
+              <p className="mx-auto mt-6 max-w-md text-lg leading-relaxed text-ink-300">
+                Create your private family tree today. It takes less than a minute,
+                and no one will ever know it exists but you.
+              </p>
+
+              <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <a
+                  href="#"
+                  className="group inline-flex items-center justify-center gap-2 rounded-xl bg-white px-7 py-4 text-sm font-semibold text-ink-900 transition-all hover:bg-gold-100 hover:shadow-xl hover:shadow-gold-400/20"
+                >
+                  Create your private tree
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </a>
+                <a
+                  href="#privacy"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl glass px-7 py-4 text-sm font-semibold text-white transition-all hover:bg-white/10"
+                >
+                  Learn about privacy
+                </a>
+              </div>
+
+              <div className="mt-8 inline-flex items-center gap-2 text-xs text-ink-400">
+                <Lock className="h-3.5 w-3.5 text-sage-400" />
+                Free to start. No credit card. No data ever leaves your account.
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+import { Reveal } from '@/components/Reveal';
+import { UserPlus, PenLine, Sparkles } from 'lucide-react';
+
+const steps = [
+  {
+    icon: UserPlus,
+    step: '01',
+    title: 'Create your private account',
+    desc: 'Sign up in seconds. No social profiles, no public identity. Your account is a sealed vault — only your credentials open it.',
+  },
+  {
+    icon: PenLine,
+    step: '02',
+    title: 'Document your family',
+    desc: 'Add relatives, upload photos, write stories, and connect generations on a beautiful interactive canvas built for clarity.',
+  },
+  {
+    icon: Sparkles,
+    step: '03',
+    title: 'Preserve and revisit anytime',
+    desc: 'Your family history is encrypted and stored privately. Return whenever you like — it will always be exactly where you left it.',
+  },
+];
+
+export function HowItWorks() {
+  return (
+    <section id="how" className="relative py-28 sm:py-36">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute top-1/2 right-0 h-[500px] w-[500px] rounded-full bg-gold-500/8 blur-[130px]" />
+      </div>
+
+      <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
+        <div className="grid items-center gap-14 lg:grid-cols-2">
+          {/* Left: image */}
+          <Reveal>
+            <div className="relative">
+              <div className="relative overflow-hidden rounded-3xl glass-strong p-2">
+                <img
+                  src="https://images.pexels.com/photos/8653687/pexels-photo-8653687.jpeg?auto=compress&cs=tinysrgb&w=900"
+                  alt="An elderly woman holding vintage family photographs"
+                  className="h-[460px] w-full rounded-2xl object-cover"
+                  loading="lazy"
+                />
+                <div className="absolute inset-2 rounded-2xl bg-gradient-to-t from-ink-950/70 via-transparent to-transparent" />
+              </div>
+
+              {/* Floating stat card */}
+              <div className="absolute -bottom-6 -left-6 hidden rounded-2xl glass-strong p-5 shadow-2xl sm:block animate-float-slower">
+                <p className="font-serif text-3xl font-light text-gradient-gold">0</p>
+                <p className="text-xs text-ink-300">People who can see<br />your tree besides you</p>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* Right: steps */}
+          <div>
+            <Reveal>
+              <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-gold-300">
+                How it works
+              </p>
+              <h2 className="font-serif text-3xl font-light leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
+                Three steps to a
+                <span className="text-gradient-gold italic"> permanent legacy.</span>
+              </h2>
+            </Reveal>
+
+            <div className="mt-10 flex flex-col gap-6">
+              {steps.map((s, i) => (
+                <Reveal key={s.step} delay={i * 120}>
+                  <div className="group flex gap-5">
+                    <div className="relative flex flex-col items-center">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl glass-strong transition-all group-hover:bg-gold-400/15">
+                        <s.icon className="h-5 w-5 text-gold-300" strokeWidth={1.6} />
+                      </div>
+                      {i < steps.length - 1 && (
+                        <div className="mt-2 w-px flex-1 bg-gradient-to-b from-white/15 to-transparent" />
+                      )}
+                    </div>
+                    <div className="pb-2">
+                      <div className="flex items-center gap-3">
+                        <span className="font-serif text-sm text-gold-300/60">{s.step}</span>
+                        <h3 className="font-serif text-lg font-medium text-white">{s.title}</h3>
+                      </div>
+                      <p className="mt-2 max-w-md text-sm leading-relaxed text-ink-300">{s.desc}</p>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+import { Reveal } from '@/components/Reveal';
+import { Lock, KeyRound, ServerOff, ShieldCheck, EyeOff, FileLock2 } from 'lucide-react';
+
+const pillars = [
+  {
+    icon: Lock,
+    title: 'End-to-end encryption',
+    desc: 'Your family data is encrypted at rest and in transit. Even our engineers cannot read your tree contents.',
+  },
+  {
+    icon: KeyRound,
+    title: 'You hold the keys',
+    desc: 'Your credentials are the only way in. There is no master key, no backdoor, and no override.',
+  },
+  {
+    icon: ServerOff,
+    title: 'No external indexing',
+    desc: 'Your tree is never submitted to search engines, public registries, or third-party genealogy databases.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Zero-knowledge architecture',
+    desc: 'We store encrypted blobs, not readable records. We cannot share what we cannot read.',
+  },
+  {
+    icon: EyeOff,
+    title: 'No tracking or profiling',
+    desc: 'We do not build advertising profiles from your family data. Your relationships are not a product.',
+  },
+  {
+    icon: FileLock2,
+    title: 'Export and delete anytime',
+    desc: 'Download your entire tree as a standard file, or permanently erase it. You are never locked in.',
+  },
+];
+
+export function Security() {
+  return (
+    <section id="security" className="relative py-28 sm:py-36">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute bottom-0 left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-ink-600/20 blur-[140px]" />
+      </div>
+
+      <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
+        <Reveal className="text-center max-w-2xl mx-auto">
+          <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-gold-300">
+            Security architecture
+          </p>
+          <h2 className="font-serif text-3xl font-light leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
+            Engineered so that
+            <span className="text-gradient-gold italic"> we cannot see your data.</span>
+          </h2>
+          <p className="mt-6 text-lg leading-relaxed text-ink-300">
+            Every layer of Ancestral Hub is designed around a single principle:
+            your family information is yours alone. Here is how we make that guarantee real.
+          </p>
+        </Reveal>
+
+        <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {pillars.map((p, i) => (
+            <Reveal key={p.title} delay={(i % 3) * 100}>
+              <div className="group relative h-full overflow-hidden rounded-3xl glass p-7 transition-all duration-500 hover:-translate-y-1 hover:bg-white/[0.07]">
+                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-sage-500/15 transition-colors group-hover:bg-sage-500/25">
+                  <p.icon className="h-5.5 w-5.5 text-sage-300" strokeWidth={1.6} />
+                </div>
+                <h3 className="font-serif text-lg font-medium text-white">{p.title}</h3>
+                <p className="mt-2.5 text-sm leading-relaxed text-ink-300">{p.desc}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        {/* Cinematic banner */}
+        <Reveal delay={200} className="mt-16">
+          <div className="relative overflow-hidden rounded-3xl">
+            <img
+              src="https://images.pexels.com/photos/17194838/pexels-photo-17194838.jpeg?auto=compress&cs=tinysrgb&w=1200"
+              alt="Abstract fiber optic network representing encrypted data"
+              className="h-[280px] w-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-ink-950 via-ink-950/80 to-ink-950/40" />
+            <div className="absolute inset-0 flex items-center">
+              <div className="max-w-lg px-8 sm:px-12">
+                <Lock className="h-8 w-8 text-gold-300" strokeWidth={1.4} />
+                <h3 className="mt-4 font-serif text-2xl font-light text-white sm:text-3xl">
+                  Your family tree is a sealed vault.
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-ink-200">
+                  No one can search for it. No one can request access to it. No one
+                  can connect to it. Unless you explicitly invite them.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+import { useEffect, useState } from 'react';
+import { Shield, Menu, X } from 'lucide-react';
+
+const links = [
+  { label: 'Privacy', href: '#privacy' },
+  { label: 'Features', href: '#features' },
+  { label: 'How it works', href: '#how' },
+  { label: 'Security', href: '#security' },
+];
+
+export function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return (
+    <header
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
+        scrolled ? 'py-3' : 'py-5'
+      }`}
+    >
+      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <nav
+          className={`flex items-center justify-between rounded-2xl px-4 py-3 transition-all duration-500 ${
+            scrolled ? 'glass-strong shadow-2xl shadow-black/40' : 'bg-transparent'
+          }`}
+        >
+          <a href="#top" className="flex items-center gap-2.5 group">
+            <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-gold-300 to-gold-500 shadow-lg shadow-gold-500/20">
+              <Shield className="h-5 w-5 text-ink-900" strokeWidth={2.2} />
+            </span>
+            <span className="font-serif text-lg font-semibold tracking-tight text-white">
+              Ancestral<span className="text-gold-300"> Hub</span>
+            </span>
+          </a>
+
+          <div className="hidden items-center gap-8 md:flex">
+            {links.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                className="text-sm font-medium text-ink-200 transition-colors hover:text-white"
+              >
+                {l.label}
+              </a>
+            ))}
+          </div>
+
+          <div className="hidden items-center gap-3 md:flex">
+            <a
+              href="#"
+              className="text-sm font-medium text-ink-200 transition-colors hover:text-white"
+            >
+              Sign in
+            </a>
+            <a
+              href="#cta"
+              className="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-ink-900 transition-all hover:bg-gold-100 hover:shadow-lg hover:shadow-gold-400/20"
+            >
+              Create your tree
+            </a>
+          </div>
+
+          <button
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-white md:hidden"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </nav>
+
+        {open && (
+          <div className="mt-2 rounded-2xl glass-strong p-5 md:hidden">
+            <div className="flex flex-col gap-4">
+              {links.map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="text-sm font-medium text-ink-200 hover:text-white"
+                >
+                  {l.label}
+                </a>
+              ))}
+              <div className="h-px bg-white/10" />
+              <a href="#" className="text-sm font-medium text-ink-200">Sign in</a>
+              <a href="#cta" className="rounded-xl bg-white px-4 py-2.5 text-center text-sm font-semibold text-ink-900">
+                Create your tree
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+}
+
+import { Reveal } from '@/components/Reveal';
+import { Network, FileText, Image, Clock, GitBranch, Fingerprint } from 'lucide-react';
+
+const features = [
+  {
+    icon: Network,
+    title: 'Interactive family trees',
+    desc: 'Build rich, visual family trees with an intuitive drag-and-drop canvas. Add photos, dates, and stories to every person.',
+    accent: 'from-gold-400/20 to-gold-600/5',
+  },
+  {
+    icon: FileText,
+    title: 'Document the stories',
+    desc: 'Attach biographies, letters, and oral histories to each ancestor. Preserve the narrative, not just the names.',
+    accent: 'from-sage-400/20 to-sage-600/5',
+  },
+  {
+    icon: Image,
+    title: 'Private photo archives',
+    desc: 'Upload and organize family photographs in encrypted galleries. Every image stays yours — watermarked and protected.',
+    accent: 'from-ink-400/20 to-ink-600/5',
+  },
+  {
+    icon: Clock,
+    title: 'Timeline view',
+    desc: 'See your family history unfold across generations on a beautiful, interactive timeline you control entirely.',
+    accent: 'from-gold-400/20 to-gold-600/5',
+  },
+  {
+    icon: GitBranch,
+    title: 'Multiple branches',
+    desc: 'Manage maternal and paternal lines independently. Invite only the people you trust, with granular view permissions.',
+    accent: 'from-sage-400/20 to-sage-600/5',
+  },
+  {
+    icon: Fingerprint,
+    title: 'Biometric-grade security',
+    desc: 'Your account is protected by modern encryption standards. Optional two-factor authentication for total peace of mind.',
+    accent: 'from-ink-400/20 to-ink-600/5',
+  },
+];
+
+export function Features() {
+  return (
+    <section id="features" className="relative py-28 sm:py-36">
+      <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
+        <Reveal className="max-w-2xl">
+          <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-gold-300">
+            Everything you need
+          </p>
+          <h2 className="font-serif text-3xl font-light leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
+            A complete toolkit for
+            <span className="text-gradient-gold italic"> your family history.</span>
+          </h2>
+          <p className="mt-5 text-lg leading-relaxed text-ink-300">
+            Thoughtfully designed tools that make documenting your genealogy feel
+            effortless — all within a space that is entirely yours.
+          </p>
+        </Reveal>
+
+        <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map((f, i) => (
+            <Reveal key={f.title} delay={(i % 3) * 100}>
+              <div className="group relative h-full overflow-hidden rounded-3xl glass p-7 transition-all duration-500 hover:-translate-y-1 hover:bg-white/[0.07]">
+                <div className={`absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br ${f.accent} opacity-60 blur-2xl transition-opacity duration-500 group-hover:opacity-100`} />
+                <div className="relative">
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl glass-strong">
+                    <f.icon className="h-5.5 w-5.5 text-gold-300" strokeWidth={1.6} />
+                  </div>
+                  <h3 className="font-serif text-lg font-medium text-white">{f.title}</h3>
+                  <p className="mt-2.5 text-sm leading-relaxed text-ink-300">{f.desc}</p>
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+import { useEffect, useState } from 'react';
+import { Shield, Lock, Eye, ArrowRight } from 'lucide-react';
+
+const treeData = [
+  { id: 'g1', x: 50, y: 8, label: 'Grandparents', gen: 'gen-3' },
+  { id: 'p1', x: 28, y: 38, label: 'Parents', gen: 'gen-2' },
+  { id: 'p2', x: 72, y: 38, label: 'Parents', gen: 'gen-2' },
+  { id: 'c1', x: 16, y: 68, label: 'You', gen: 'gen-1', isYou: true },
+  { id: 'c2', x: 40, y: 68, label: 'Sibling', gen: 'gen-1' },
+  { id: 'c3', x: 64, y: 68, label: 'Cousin', gen: 'gen-1' },
+  { id: 'c4', x: 88, y: 68, label: 'Cousin', gen: 'gen-1' },
+];
+
+const edges = [
+  ['g1', 'p1'], ['g1', 'p2'],
+  ['p1', 'c1'], ['p1', 'c2'],
+  ['p2', 'c3'], ['p2', 'c4'],
+];
+
+export function Hero() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 200);
+    return () => clearTimeout(t);
+  }, []);
+
+  return (
+    <section id="top" className="relative min-h-screen overflow-hidden pt-32 pb-20">
+      {/* Background gradients */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-40 left-1/2 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-gold-500/10 blur-[120px]" />
+        <div className="absolute top-1/3 -left-40 h-[500px] w-[500px] rounded-full bg-ink-600/30 blur-[120px] animate-pulse-soft" />
+        <div className="absolute bottom-0 right-0 h-[400px] w-[400px] rounded-full bg-sage-700/20 blur-[100px]" />
+      </div>
+
+      <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-8">
+          {/* Left: copy */}
+          <div className="flex flex-col items-start">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full glass px-3.5 py-1.5 animate-fade-in">
+              <Lock className="h-3.5 w-3.5 text-gold-300" />
+              <span className="text-xs font-medium tracking-wide text-ink-200">
+                Private by design. Not by setting.
+              </span>
+            </div>
+
+            <h1 className="font-serif text-4xl font-light leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-7xl">
+              Your family story
+              <br />
+              belongs <span className="text-gradient-gold font-normal italic">only to you.</span>
+            </h1>
+
+            <p className="mt-6 max-w-md text-lg leading-relaxed text-ink-300">
+              Discover, document, and preserve your genealogy in a completely private
+              and secure environment. No public databases. No searchable profiles.
+              No unwanted connections — ever.
+            </p>
+
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <a
+                href="#cta"
+                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-ink-900 transition-all hover:bg-gold-100 hover:shadow-xl hover:shadow-gold-400/20"
+              >
+                Create your private tree
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              </a>
+              <a
+                href="#how"
+                className="inline-flex items-center justify-center gap-2 rounded-xl glass px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-white/10"
+              >
+                See how it works
+              </a>
+            </div>
+
+            <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-ink-400">
+              <span className="inline-flex items-center gap-1.5">
+                <Shield className="h-3.5 w-3.5 text-sage-400" /> End-to-end encrypted
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Eye className="h-3.5 w-3.5 text-sage-400" /> Never indexed
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Lock className="h-3.5 w-3.5 text-sage-400" /> Never sold or shared
+              </span>
+            </div>
+          </div>
+
+          {/* Right: interactive tree visualization */}
+          <div className="relative">
+            <div className="relative aspect-square max-w-[520px] mx-auto">
+              {/* Glass card backdrop */}
+              <div className="absolute inset-0 rounded-[2.5rem] glass-strong shadow-2xl shadow-black/50" />
+              <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-gold-500/5 via-transparent to-sage-500/5" />
+
+              {/* SVG tree */}
+              <svg
+                viewBox="0 0 100 100"
+                className="absolute inset-0 h-full w-full p-8"
+                preserveAspectRatio="xMidYMid meet"
+              >
+                {/* Edges */}
+                {edges.map(([from, to], i) => {
+                  const f = treeData.find((n) => n.id === from)!;
+                  const t = treeData.find((n) => n.id === to)!;
+                  const midY = (f.y + t.y) / 2;
+                  return (
+                    <path
+                      key={i}
+                      d={`M ${f.x} ${f.y} C ${f.x} ${midY}, ${t.x} ${midY}, ${t.x} ${t.y}`}
+                      fill="none"
+                      stroke="url(#edgeGrad)"
+                      strokeWidth="0.5"
+                      strokeLinecap="round"
+                      className={mounted ? 'animate-draw' : ''}
+                      style={{ strokeDasharray: 600, animationDelay: `${i * 0.15}s` }}
+                    />
+                  );
+                })}
+
+                <defs>
+                  <linearGradient id="edgeGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#DCBC63" stopOpacity="0.7" />
+                    <stop offset="100%" stopColor="#82B093" stopOpacity="0.4" />
+                  </linearGradient>
+                  <linearGradient id="nodeGold" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#EBD49A" />
+                    <stop offset="100%" stopColor="#B5914A" />
+                  </linearGradient>
+                  <linearGradient id="nodeSage" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#AFCFB9" />
+                    <stop offset="100%" stopColor="#5C9270" />
+                  </linearGradient>
+                  <linearGradient id="nodeInk" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#333C56" />
+                    <stop offset="100%" stopColor="#161C30" />
+                  </linearGradient>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="1.5" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
+
+                {/* Nodes */}
+                {treeData.map((node, i) => (
+                  <g
+                    key={node.id}
+                    style={{
+                      opacity: mounted ? 1 : 0,
+                      transform: mounted ? 'scale(1)' : 'scale(0.5)',
+                      transformOrigin: `${node.x}px ${node.y}px`,
+                      transition: `opacity 0.6s ease ${0.3 + i * 0.12}s, transform 0.6s cubic-bezier(0.16,1,0.3,1) ${0.3 + i * 0.12}s`,
+                    }}
+                  >
+                    {node.isYou && (
+                      <circle cx={node.x} cy={node.y} r="6" fill="none" stroke="url(#nodeGold)" strokeWidth="0.4" opacity="0.5">
+                        <animate attributeName="r" values="6;7.5;6" dur="3s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" values="0.5;0.1;0.5" dur="3s" repeatCount="indefinite" />
+                      </circle>
+                    )}
+                    <circle
+                      cx={node.x}
+                      cy={node.y}
+                      r={node.isYou ? 4.5 : 3.8}
+                      fill={node.isYou ? 'url(#nodeGold)' : node.gen === 'gen-3' ? 'url(#nodeSage)' : 'url(#nodeInk)'}
+                      stroke={node.isYou ? '#F5E9CC' : 'rgba(255,255,255,0.15)'}
+                      strokeWidth="0.3"
+                      filter={node.isYou ? 'url(#glow)' : undefined}
+                    />
+                    <text
+                      x={node.x}
+                      y={node.y + 8}
+                      textAnchor="middle"
+                      className="fill-ink-200"
+                      style={{ fontSize: '2.4px', fontWeight: 500 }}
+                    >
+                      {node.label}
+                    </text>
+                  </g>
+                ))}
+              </svg>
+
+              {/* Floating privacy badge */}
+              <div className="absolute -bottom-4 -right-2 flex items-center gap-2 rounded-2xl glass-strong px-4 py-3 shadow-xl animate-float-slow">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sage-500/20">
+                  <Lock className="h-4 w-4 text-sage-300" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-white">100% Private</p>
+                  <p className="text-[10px] text-ink-400">Only you can see this</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+import { Reveal } from '@/components/Reveal';
+import { Database, Search, Link2, Share2, Check } from 'lucide-react';
+
+const denied = [
+  { icon: Database, label: 'No public databases' },
+  { icon: Search, label: 'No searchable profiles' },
+  { icon: Link2, label: 'No unwanted connections' },
+  { icon: Share2, label: 'No sharing without consent' },
+];
+
+export function Privacy() {
+  return (
+    <section id="privacy" className="relative py-28 sm:py-36">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute top-0 left-1/4 h-[400px] w-[400px] rounded-full bg-sage-700/10 blur-[120px]" />
+      </div>
+
+      <div className="relative mx-auto max-w-5xl px-5 sm:px-8">
+        <Reveal className="text-center">
+          <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-gold-300">
+            The Foundation
+          </p>
+          <h2 className="font-serif text-3xl font-light leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
+            Privacy is not a feature.
+            <br />
+            <span className="text-gradient-gold italic">It is the foundation.</span>
+          </h2>
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-ink-300">
+            Unlike traditional genealogy platforms, every family tree created here is
+            completely private. Your data belongs to you — and only you. We have
+            engineered the platform so that we cannot access your family information
+            even if we wanted to.
+          </p>
+        </Reveal>
+
+        <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {denied.map((item, i) => (
+            <Reveal key={item.label} delay={i * 100}>
+              <div className="group relative h-full overflow-hidden rounded-2xl glass p-6 transition-all hover:bg-white/[0.07]">
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-red-500/10">
+                  <item.icon className="h-5 w-5 text-red-300/80" />
+                </div>
+                <p className="text-sm font-medium text-white">{item.label}</p>
+                <div className="absolute -right-2 -top-2 text-6xl font-thin text-white/[0.03]">
+                  ✕
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        <Reveal delay={200} className="mt-16">
+          <div className="relative overflow-hidden rounded-3xl glass-strong p-8 sm:p-12">
+            <div className="absolute inset-0 bg-gradient-to-r from-sage-700/10 to-transparent" />
+            <div className="relative flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sage-500/20">
+                  <Check className="h-6 w-6 text-sage-300" strokeWidth={2.5} />
+                </div>
+                <div>
+                  <h3 className="font-serif text-xl font-medium text-white">
+                    Every member owns their own genealogy
+                  </h3>
+                  <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-300">
+                    Your family tree is encrypted, isolated, and accessible only with
+                    your credentials. We never sell, share, index, or view your
+                    information — not now, not ever.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+import { Navbar } from '@/components/Navbar';
+import { Hero } from '@/components/Hero';
+import { Privacy } from '@/components/Privacy';
+import { Features } from '@/components/Features';
+import { HowItWorks } from '@/components/HowItWorks';
+import { Security } from '@/components/Security';
+import { Testimonial } from '@/components/Testimonial';
+import { CTA } from '@/components/CTA';
+import { Footer } from '@/components/Footer';
+
+function App() {
+  return (
+    <div className="relative min-h-screen overflow-x-hidden bg-ink-950">
+      {/* Ambient page background */}
+      <div className="pointer-events-none fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-ink-950 via-ink-900 to-ink-950" />
+        <div
+          className="absolute inset-0 opacity-[0.015]"
+          style={{
+            backgroundImage:
+              'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
+            backgroundSize: '48px 48px',
+          }}
+        />
+      </div>
+
+      <div className="relative z-10">
+        <Navbar />
+        <main>
+          <Hero />
+          <Privacy />
+          <Features />
+          <HowItWorks />
+          <Security />
+          <Testimonial />
+          <CTA />
+        </main>
+        <Footer />
+      </div>
+    </div>
+  );
+}
+
+export default App;
+
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
+
+/// <reference types="vite/client" />
+
+For all designs I ask you to make, have them be beautiful, not cookie cutter. Make webpages that are fully featured and worthy for production.
+
+By default, this template supports JSX syntax with Tailwind CSS classes, React hooks, and Lucide React for icons. Do not install other packages for UI themes, icons, etc unless absolutely necessary or I request them.
+
+Use icons from lucide-react for logos.
+
+Import project modules with the `@/` path alias, which maps to `src/` (e.g. `@/components/Foo` == `src/components/Foo`), instead of deep relative paths like `../../components/Foo`.
+
+{
+  "template": "bolt-vite-react-ts"
+}
+
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Fraunces', 'Georgia', 'serif'],
+      },
+      colors: {
+        ink: {
+          50: '#F4F6FB',
+          100: '#E6EAF3',
+          200: '#C7CFE0',
+          300: '#9AA6C2',
+          400: '#6B7898',
+          500: '#4A5673',
+          600: '#333C56',
+          700: '#222A40',
+          800: '#161C30',
+          900: '#0B0F1E',
+          950: '#060912',
+        },
+        gold: {
+          50: '#FBF6EA',
+          100: '#F5E9CC',
+          200: '#EBD49A',
+          300: '#DCBC63',
+          400: '#C9A961',
+          500: '#B5914A',
+          600: '#94743A',
+          700: '#6F5630',
+          800: '#4D3C24',
+          900: '#2E2417',
+        },
+        sage: {
+          50: '#EEF5F1',
+          100: '#D6E8DF',
+          200: '#AFCFB9',
+          300: '#82B093',
+          400: '#5C9270',
+          500: '#427357',
+          600: '#335C44',
+          700: '#274734',
+          800: '#1B3326',
+          900: '#102017',
+        },
+      },
+      animation: {
+        'fade-up': 'fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'fade-in': 'fadeIn 1s ease forwards',
+        'float-slow': 'float 8s ease-in-out infinite',
+        'float-slower': 'float 12s ease-in-out infinite',
+        'pulse-soft': 'pulseSoft 4s ease-in-out infinite',
+        'draw': 'draw 2s ease forwards',
+        'shimmer': 'shimmer 3s linear infinite',
+      },
+      keyframes: {
+        fadeUp: {
+          '0%': { opacity: '0', transform: 'translateY(28px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-18px)' },
+        },
+        pulseSoft: {
+          '0%, 100%': { opacity: '0.4' },
+          '50%': { opacity: '0.9' },
+        },
+        draw: {
+          '0%': { strokeDashoffset: '600' },
+          '100%': { strokeDashoffset: '0' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% center' },
+          '100%': { backgroundPosition: '200% center' },
+        },
+      },
+    },
+  },
+  plugins: [],
+};
+
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ancestral Hub — Your Family Story Belongs Only to You</title>
+    <meta name="description" content="A completely private, secure genealogy platform. No public databases. No searchable profiles. Every member owns their own family history." />
+    <meta property="og:image" content="https://bolt.new/static/og_default.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://bolt.new/static/og_default.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Path alias — depth-invariant imports for src (@/foo === src/foo from any file) */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"]
+}
