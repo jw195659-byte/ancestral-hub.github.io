@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ancestral Hub — Your family history, held in confidence</title>
+<meta name="description" content="Trace your lineage in complete privacy. Ancestral Hub is a private, membership-only archive for the story only you get to open.">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* ---- hero layout ---- */
+  .hero{
+    padding: 76px 0 100px;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .hero h1{
+    font-size: clamp(2.4rem, 4.6vw, 3.6rem);
+    margin-top: 18px;
+    line-height: 1.08;
+  }
+  .hero h1 em{ font-style: italic; color: var(--rust-600); }
+  .hero .lede{ margin-top: 22px; font-size: 1.18rem; }
+  .hero-actions{ display:flex; gap: 16px; margin-top: 34px; flex-wrap: wrap; }
+  .hero-note{
+    margin-top: 22px;
+    font-family: var(--f-mono);
+    font-size: 0.76rem;
+    color: rgba(36,31,26,0.55);
+    letter-spacing: 0.02em;
+  }
+
+  /* ---- signature: the sealed record ---- */
+  .seal-stage{
+    position: relative;
+    aspect-ratio: 4/5;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  .seal-stage .certificate{
+    position: absolute; inset: 0;
+    background: var(--parchment-100);
+    border: 1px solid rgba(36,31,26,0.18);
+    box-shadow: var(--shadow-card);
+    padding: 34px;
+    overflow: hidden;
+  }
+  .certificate .cert-eyebrow{
+    font-family: var(--f-mono); font-size: 0.65rem; letter-spacing: 0.14em;
+    color: rgba(36,31,26,0.45); text-transform: uppercase;
+  }
+  .certificate .cert-title{
+    font-family: var(--f-display); font-style: italic; font-size: 1.3rem;
+    margin-top: 8px; color: var(--ink-950);
+  }
+  .tree-line{
+    position:absolute; inset: 70px 28px 28px 28px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .tree-line path{
+    stroke: var(--moss-800);
+    stroke-width: 1.6;
+    fill: none;
+    stroke-dasharray: 900;
+    stroke-dashoffset: 900;
+    transition: stroke-dashoffset 1.4s ease;
+  }
+  .tree-line circle{ fill: var(--brass-500); }
+
+  .wax-seal{
+    position: absolute;
+    right: 30px; bottom: 30px;
+    width: 108px; height: 108px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #b8523a, var(--rust-700) 70%);
+    display: flex; align-items:center; justify-content:center;
+    box-shadow: 0 10px 22px -8px rgba(0,0,0,0.45);
+    cursor: pointer;
+    transition: transform 0.5s cubic-bezier(.4,0,.2,1), opacity 0.5s ease;
+    border: none;
+  }
+  .wax-seal:focus-visible{ outline: 2px solid var(--brass-500); outline-offset: 4px; }
+  .wax-seal svg{ width: 46px; height: 46px; }
+  .wax-seal .ring{ fill:none; stroke: rgba(239,231,211,0.55); stroke-width: 1; }
+  .wax-seal .initial{ fill: var(--parchment-50); font-family: var(--f-display); font-style: italic; }
+
+  .seal-stage.open .wax-seal{
+    transform: translate(14px, 14px) scale(0.72) rotate(8deg);
+    opacity: 0.85;
+  }
+  .seal-stage.open .tree-line{ opacity: 1; transform: translateY(0); }
+  .seal-stage.open .tree-line path{ stroke-dashoffset: 0; }
+
+  .seal-hint{
+    text-align: center;
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    color: rgba(36,31,26,0.5);
+    margin-top: 14px;
+    letter-spacing: 0.03em;
+  }
+
+  @media (max-width: 900px){
+    .hero{ grid-template-columns: 1fr; padding-top: 40px; }
+    .seal-stage{ margin-top: 20px; }
+  }
+
+  /* feature cards row uses .grid-3 / .card from shared css */
+
+  .quote-block{
+    display:grid; grid-template-columns: auto 1fr; gap: 28px; align-items:flex-start;
+  }
+  .quote-mark{ font-family: var(--f-display); font-size: 4rem; color: var(--brass-500); line-height: 0.6; margin-top: 18px; }
+  .quote-block blockquote{
+    font-family: var(--f-display); font-style: italic; font-size: 1.5rem;
+    margin: 0; color: var(--parchment-50); line-height: 1.5; max-width: 34ch;
+  }
+  .quote-block cite{ display:block; margin-top: 18px; font-family: var(--f-mono); font-size: 0.78rem; color: rgba(239,231,211,0.6); font-style:normal; }
+
+  @media (max-width: 700px){
+    .quote-block{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site">
+  <div class="wrap nav-row">
+    <a class="brand" href="index.html">
+      <svg class="brand-mark" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13 3V23M13 3C10 6 6 7 4 7M13 3C16 6 20 7 22 7M13 12C10.5 14 7.5 14.5 6 14.5M13 12C15.5 14 18.5 14.5 20 14.5" stroke="#B8873E" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      Ancestral Hub
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav" onclick="const n=document.getElementById('primary-nav');const open=n.classList.toggle('open');this.setAttribute('aria-expanded',open);this.textContent=open?'Close':'Menu';">Menu</button>
+    <nav class="links" id="primary-nav">
+      <a href="index.html" aria-current="page">Home</a>
+      <a href="how-it-works.html">How It Works</a>
+      <a href="membership.html">Membership</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="about.html">About</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="membership.html">See pricing</a>
+      <a class="btn btn-primary" href="membership.html">Start your archive</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="tight">
+    <div class="wrap hero">
+      <div>
+        <span class="eyebrow">Private genealogical research</span>
+        <h1>Your family's story.<br>Sealed until <em>you</em> open it.</h1>
+        <p class="lede">Ancestral Hub gives you a private research room to trace your lineage — census records, immigration papers, parish registers, and the stories in between. Every account is closed to search engines, closed to other members, closed to everyone but you.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="membership.html">Start your archive — from $9/mo</a>
+          <a class="btn btn-ghost" href="how-it-works.html">See how it works</a>
+        </div>
+        <p class="hero-note">NO PUBLIC PROFILES · NO DATA RESALE · CANCEL ANYTIME</p>
+      </div>
+
+      <div>
+        <div class="seal-stage" id="sealStage">
+          <div class="certificate">
+            <div class="cert-eyebrow">Record No. 0347 — Private</div>
+            <div class="cert-title">Family Record, Held in Trust</div>
+            <svg class="tree-line" viewBox="0 0 260 300" aria-hidden="true">
+              <path d="M130 20 L130 90 M130 90 L70 150 M130 90 L190 150 M70 150 L70 220 M70 150 L30 220 M190 150 L190 220 M190 150 L230 220 M70 220 L70 270 M190 220 L190 270"/>
+              <circle cx="130" cy="20" r="5"/>
+              <circle cx="70" cy="150" r="5"/>
+              <circle cx="190" cy="150" r="5"/>
+              <circle cx="70" cy="220" r="4"/>
+              <circle cx="30" cy="220" r="4"/>
+              <circle cx="190" cy="220" r="4"/>
+              <circle cx="230" cy="220" r="4"/>
+              <circle cx="70" cy="270" r="4"/>
+              <circle cx="190" cy="270" r="4"/>
+            </svg>
+            <button class="wax-seal" id="wax" aria-expanded="false" aria-label="Unseal the sample record to preview a family tree">
+              <svg viewBox="0 0 60 60">
+                <circle class="ring" cx="30" cy="30" r="24"/>
+                <text class="initial" x="30" y="38" font-size="24" text-anchor="middle">AH</text>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <p class="seal-hint">Click the seal — this is what stays private on your account</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">What's inside</span>
+        <h2>Three ways in, one private room</h2>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="rec-no">FILE — RECORDS</div>
+          <h3>Original documents</h3>
+          <p>Census sheets, ship manifests, parish registers, and military files, sourced and cross-checked, not guessed at by an algorithm.</p>
+        </div>
+        <div class="card">
+          <div class="rec-no">FILE — TREE</div>
+          <h3>A living family tree</h3>
+          <p>Build your tree as you confirm each generation. Every branch links back to the document that proves it.</p>
+        </div>
+        <div class="card">
+          <div class="rec-no">FILE — STORY</div>
+          <h3>The story around the facts</h3>
+          <p>Migration routes, occupations, the towns your family left and the ones they built. Context, not just dates.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="on-dark">
+    <div class="wrap quote-block">
+      <span class="quote-mark">"</span>
+      <div>
+        <blockquote>I found my great-grandmother's ship manifest in the second week. No public tree, no stranger messaging me about it. It was just mine to find.</blockquote>
+        <cite>— A member since 2024</cite>
+      </div>
+    </div>
+  </section>
+
+  <section class="tight">
+    <div class="wrap">
+      <div class="cta-band">
+        <div>
+          <span class="eyebrow" style="color:var(--parchment-100)">Ready when you are</span>
+          <h2>Open your own record room today.</h2>
+        </div>
+        <div style="display:flex; gap:14px; flex-wrap:wrap;">
+          <a class="btn btn-on-dark" href="privacy.html">Read our privacy terms</a>
+          <a class="btn" style="background:var(--parchment-50); color:var(--ink-950);" href="membership.html">Choose a plan</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap footer-top">
+    <div>
+      <div class="footer-brand">Ancestral Hub</div>
+      <p class="footer-tag">A private research room for the story only your family gets to read.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Site</h5>
+      <a href="index.html">Home</a>
+      <a href="how-it-works.html">How It Works</a>
+      <a href="membership.html">Membership</a>
+    </div>
+    <div class="footer-col">
+      <h5>Trust</h5>
+      <a href="privacy.html">Privacy &amp; Security</a>
+      <a href="about.html">About Us</a>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <a href="mailto:hello@ancestralhub.example">hello@ancestralhub.example</a>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© 2026 Ancestral Hub. All records held in confidence.</span>
+    <span>Made for family historians, not family databases.</span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('wax').addEventListener('click', function(){
+    const stage = document.getElementById('sealStage');
+    const open = stage.classList.toggle('open');
+    this.setAttribute('aria-expanded', open);
+  });
+</script>
+
+</body>
+</html>

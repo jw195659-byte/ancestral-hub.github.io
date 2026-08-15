@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy &amp; Security — Ancestral Hub</title>
+<meta name="description" content="How Ancestral Hub keeps your family history private: no public profiles, no data resale, encryption at rest, and full member control.">
+<link rel="stylesheet" href="style.css">
+<style>
+  .vault-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap: 24px; }
+  @media (max-width: 860px){ .vault-grid{ grid-template-columns: 1fr; } }
+
+  .vault-item{
+    background: var(--ink-950);
+    color: var(--parchment-100);
+    padding: 30px;
+    border-left: 3px solid var(--brass-500);
+  }
+  .vault-item .rec-no{ font-family: var(--f-mono); font-size: 0.7rem; color: var(--brass-500); }
+  .vault-item h3{ color: var(--parchment-50); margin-top: 10px; font-size: 1.15rem; }
+  .vault-item p{ margin-top: 10px; color: rgba(239,231,211,0.72); font-size: 0.95rem; }
+
+  .promise-list{ list-style:none; padding:0; margin: 0; }
+  .promise-list li{
+    display:flex; gap: 16px; align-items:flex-start;
+    padding: 22px 0; border-bottom: var(--border-hair);
+  }
+  .promise-list li:first-child{ border-top: var(--border-hair); }
+  .promise-list .mark{
+    font-family: var(--f-mono); font-size: 0.8rem; color: var(--rust-600); margin-top: 3px;
+  }
+  .promise-list h3{ font-size: 1.05rem; font-family: var(--f-body); font-weight: 600; }
+  .promise-list p{ margin-top: 6px; color: rgba(36,31,26,0.72); max-width: 60ch; }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site">
+  <div class="wrap nav-row">
+    <a class="brand" href="index.html">
+      <svg class="brand-mark" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13 3V23M13 3C10 6 6 7 4 7M13 3C16 6 20 7 22 7M13 12C10.5 14 7.5 14.5 6 14.5M13 12C15.5 14 18.5 14.5 20 14.5" stroke="#B8873E" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      Ancestral Hub
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav" onclick="const n=document.getElementById('primary-nav');const open=n.classList.toggle('open');this.setAttribute('aria-expanded',open);this.textContent=open?'Close':'Menu';">Menu</button>
+    <nav class="links" id="primary-nav">
+      <a href="index.html">Home</a>
+      <a href="how-it-works.html">How It Works</a>
+      <a href="membership.html">Membership</a>
+      <a href="privacy.html" aria-current="page">Privacy</a>
+      <a href="about.html">About</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="membership.html">See pricing</a>
+      <a class="btn btn-primary" href="membership.html">Start your archive</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="page-hero tight">
+    <div class="wrap">
+      <span class="eyebrow">Privacy &amp; Security</span>
+      <h1>Family history is personal. We built the whole product around that.</h1>
+      <p class="lede" style="margin-top:18px;">Most genealogy platforms make their money from public trees and shared data. Ancestral Hub doesn't — your membership fee is the entire business, which means there's no incentive to make any part of your history visible to anyone but you.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">The vault</span>
+        <h2>What "private" actually means here</h2>
+      </div>
+      <div class="vault-grid">
+        <div class="vault-item">
+          <div class="rec-no">01 — ENCRYPTION</div>
+          <h3>Encrypted at rest and in transit</h3>
+          <p>Every document, tree entry, and note is encrypted in storage and while moving between your device and ours.</p>
+        </div>
+        <div class="vault-item">
+          <div class="rec-no">02 — VISIBILITY</div>
+          <h3>No public profiles, ever</h3>
+          <p>There is no public version of your tree. It cannot be indexed by search engines or browsed by non-members, by design.</p>
+        </div>
+        <div class="vault-item">
+          <div class="rec-no">03 — SHARING</div>
+          <h3>You choose who sees what</h3>
+          <p>On Family and Legacy plans, sharing is invite-only, relative by relative, and revocable at any time.</p>
+        </div>
+        <div class="vault-item">
+          <div class="rec-no">04 — OWNERSHIP</div>
+          <h3>Your data leaves when you do</h3>
+          <p>Export your full tree and documents whenever you like. Delete your account and the underlying data is removed, not archived.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="on-parchment-deep tight">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Our commitments</span>
+        <h2>What we will never do</h2>
+      </div>
+      <ul class="promise-list">
+        <li>
+          <span class="mark">→</span>
+          <div>
+            <h3>We will never sell or license your data</h3>
+            <p>Not to advertisers, not to data brokers, not to other genealogy companies. The membership fee is how this business is funded.</p>
+          </div>
+        </li>
+        <li>
+          <span class="mark">→</span>
+          <div>
+            <h3>We will never publish your tree without explicit action from you</h3>
+            <p>There's no default "public" setting to opt out of — public visibility doesn't exist as a feature.</p>
+          </div>
+        </li>
+        <li>
+          <span class="mark">→</span>
+          <div>
+            <h3>We will never show you ads</h3>
+            <p>No third-party ad networks, no tracking pixels from advertisers, no sponsored "record matches."</p>
+          </div>
+        </li>
+        <li>
+          <span class="mark">→</span>
+          <div>
+            <h3>We will never lock your data in</h3>
+            <p>Full export is available on every plan, in standard formats, at no extra charge.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="tight">
+    <div class="wrap">
+      <div class="cta-band">
+        <div>
+          <span class="eyebrow" style="color:var(--parchment-100)">Still have questions</span>
+          <h2>Read the membership FAQ, or write to us directly.</h2>
+        </div>
+        <div style="display:flex; gap:14px; flex-wrap:wrap;">
+          <a class="btn btn-on-dark" href="membership.html">Membership FAQ</a>
+          <a class="btn" style="background:var(--parchment-50); color:var(--ink-950);" href="mailto:hello@ancestralhub.example">Email us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap footer-top">
+    <div>
+      <div class="footer-brand">Ancestral Hub</div>
+      <p class="footer-tag">A private research room for the story only your family gets to read.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Site</h5>
+      <a href="index.html">Home</a>
+      <a href="how-it-works.html">How It Works</a>
+      <a href="membership.html">Membership</a>
+    </div>
+    <div class="footer-col">
+      <h5>Trust</h5>
+      <a href="privacy.html">Privacy &amp; Security</a>
+      <a href="about.html">About Us</a>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <a href="mailto:hello@ancestralhub.example">hello@ancestralhub.example</a>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© 2026 Ancestral Hub. All records held in confidence.</span>
+    <span>Made for family historians, not family databases.</span>
+  </div>
+</footer>
+
+</body>
+</html>

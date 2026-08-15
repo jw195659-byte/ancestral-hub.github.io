@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Ancestral Hub</title>
+<meta name="description" content="Why Ancestral Hub exists: a genealogy service built on membership fees, not on selling family data.">
+<link rel="stylesheet" href="style.css">
+<style>
+  .story-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items:start; }
+  @media (max-width: 860px){ .story-grid{ grid-template-columns: 1fr; } }
+  .story-grid p{ margin-top: 16px; color: rgba(36,31,26,0.78); }
+  .story-grid p:first-of-type{ margin-top: 0; }
+
+  .values{ display:grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+  @media (max-width: 860px){ .values{ grid-template-columns: 1fr; } }
+
+  .stamp{
+    display:inline-flex; flex-direction:column;
+    border: 1px solid rgba(36,31,26,0.3);
+    padding: 18px 22px;
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: rgba(36,31,26,0.6);
+  }
+  .stamp b{ color: var(--charcoal-900); font-size: 0.9rem; letter-spacing: 0.02em; }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site">
+  <div class="wrap nav-row">
+    <a class="brand" href="index.html">
+      <svg class="brand-mark" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13 3V23M13 3C10 6 6 7 4 7M13 3C16 6 20 7 22 7M13 12C10.5 14 7.5 14.5 6 14.5M13 12C15.5 14 18.5 14.5 20 14.5" stroke="#B8873E" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      Ancestral Hub
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav" onclick="const n=document.getElementById('primary-nav');const open=n.classList.toggle('open');this.setAttribute('aria-expanded',open);this.textContent=open?'Close':'Menu';">Menu</button>
+    <nav class="links" id="primary-nav">
+      <a href="index.html">Home</a>
+      <a href="how-it-works.html">How It Works</a>
+      <a href="membership.html">Membership</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="about.html" aria-current="page">About</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="privacy.html">Privacy terms</a>
+      <a class="btn btn-primary" href="membership.html">Start your archive</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="page-hero tight">
+    <div class="wrap">
+      <span class="eyebrow">About Ancestral Hub</span>
+      <h1>We built the archive we couldn't find.</h1>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap story-grid">
+      <div>
+        <p class="lede" style="font-size:1.15rem;">Ancestral Hub started with a filing cabinet, not a pitch deck. Our founder spent three years piecing together a family's migration from a single water-stained photograph and a surname spelled four different ways across five countries.</p>
+        <p>What was missing wasn't more records — it was a place to hold them that didn't ask her to make her family's history public in exchange for access. Every free genealogy tool she tried came with the same trade: search our archive, and your tree becomes part of it too.</p>
+      </div>
+      <div>
+        <p>So we built something else: a research room that runs on membership fees instead of visibility. No public trees. No incentive to grow a database off the back of your family's records. Just a private, well-organized place to do the work.</p>
+        <p>Today, Ancestral Hub is a small team of researchers, archivists, and engineers who treat every account the way our founder wished hers had been treated from the start — as a private study, not a public listing.</p>
+        <div class="stamp" style="margin-top:26px;">
+          <b>Est. 2021</b>
+          Independently owned. No outside data partnerships.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="on-parchment-deep tight">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">What we hold ourselves to</span>
+        <h2>Three commitments behind everything we build</h2>
+      </div>
+      <div class="values">
+        <div class="card">
+          <div class="rec-no">VALUE — 01</div>
+          <h3>Privacy is the default, not a setting</h3>
+          <p>We don't add public visibility later as a "feature." It was never on the table.</p>
+        </div>
+        <div class="card">
+          <div class="rec-no">VALUE — 02</div>
+          <h3>Sourced, not guessed</h3>
+          <p>Every entry in your tree traces back to a document. We'd rather show fewer results than unreliable ones.</p>
+        </div>
+        <div class="card">
+          <div class="rec-no">VALUE — 03</div>
+          <h3>You can always leave with your work</h3>
+          <p>No lock-in. Your tree and documents are yours to export, in full, at any time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tight">
+    <div class="wrap">
+      <div class="cta-band">
+        <div>
+          <span class="eyebrow" style="color:var(--parchment-100)">Join us</span>
+          <h2>Start your own private record room.</h2>
+        </div>
+        <a class="btn" style="background:var(--parchment-50); color:var(--ink-950);" href="membership.html">View membership plans</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap footer-top">
+    <div>
+      <div class="footer-brand">Ancestral Hub</div>
+      <p class="footer-tag">A private research room for the story only your family gets to read.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Site</h5>
+      <a href="index.html">Home</a>
+      <a href="how-it-works.html">How It Works</a>
+      <a href="membership.html">Membership</a>
+    </div>
+    <div class="footer-col">
+      <h5>Trust</h5>
+      <a href="privacy.html">Privacy &amp; Security</a>
+      <a href="about.html">About Us</a>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <a href="mailto:hello@ancestralhub.example">hello@ancestralhub.example</a>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© 2026 Ancestral Hub. All records held in confidence.</span>
+    <span>Made for family historians, not family databases.</span>
+  </div>
+</footer>
+
+</body>
+</html>
