@@ -1,4 +1,41 @@
+name: Build and deploy site
 
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare out directory
+        run: |
+          rm -rf out
+          mkdir -p out
+          # Copy repo root into out/ but exclude .git and .github and node_modules
+          rsync -av --exclude='.git' --exclude='.github' --exclude='node_modules' ./ out/
+
+      - name: List out/ contents (for debugging)
+        run: ls -la out || true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: out
+
+  deploy:
+    needs: build_and_deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1
 @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
  
 :root{
